@@ -4,11 +4,11 @@ Instrucciones para utilizar el API.
 
 ## Para iniciar el servidor de Rails:
 
-*Puerto 3000 (por defecto):*
+_Puerto 3000 (por defecto):_
 
 rails s
 
-*Cualquier otro puerto:*
+_Cualquier otro puerto:_
 
 rails s -p 3001
 
@@ -18,7 +18,7 @@ rails db:reset
 
 ## Para hacer requests:
 
-*Pacientes:*
+_Pacientes:_
 
-* Obtener (GET): /api/patients.json
-* Crear (POST):  /api/patients.json
+- Obtener (GET): /api/patients
+- Crear (POST): /api/patients/create
