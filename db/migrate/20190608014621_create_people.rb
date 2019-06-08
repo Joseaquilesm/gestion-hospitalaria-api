@@ -8,12 +8,12 @@ class CreatePeople < ActiveRecord::Migration[5.2]
       t.string :phone_number
       t.string :genre
       t.date :birthday
-      t.timestamps
       t.string :birth_place
       t.string :nationality
       t.string :email
       t.string :civil_status
       t.string :religion
+      t.timestamps
     end
   end
 end

@@ -1,7 +1,7 @@
-class CreatePatients < ActiveRecord::Migration[5.2]
+class CreatePatient < ActiveRecord::Migration[5.2]
   def change
     create_table :patients do |t|
-      t.integer :person_id
+      t.references :person, foreign_key: true
       t.string :blood_type
       t.boolean :insured
       t.string :insurance_carrier
@@ -22,7 +22,6 @@ class CreatePatients < ActiveRecord::Migration[5.2]
       t.string :home_insurance_carrier
       t.string :recreation_place
       t.string :recreation_frequency
-      t.timestamps
     end
   end
 end

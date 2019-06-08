@@ -20,5 +20,7 @@ rails db:reset
 
 _Pacientes:_
 
-- Obtener (GET): /api/patients
-- Crear (POST): /api/patients/create
+- Obtener todos los pacientes (GET): /api/patients
+- Crear (POST): /api/patients
+- Obtener un paciente (GET): /api/patients/id
+- Actualizar un paciente (PUT): /api/patients/id
