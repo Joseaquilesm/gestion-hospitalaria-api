@@ -1,0 +1,24 @@
+es:
+  active_admin:
+    delete_model: "Archivar %{model}"
+    delete: "Archivar"
+    delete_confirmation: "¿Estás seguro de que quieres archivar esto?"
+    batch_actions:
+      delete_confirmation: "¿Estás seguro de que quieres archivar estos %{plural_model}?"
+      succesfully_destroyed:
+        one: "Se archivó 1 %{model}"
+        other: "Se archivaron %{count} %{plural_model}"
+      labels:
+        destroy: "Archivar"
+  active_admin_paranoia:
+    batch_actions:
+      restore_confirmation: "¿Estás seguro de que quieres restaurar estos %{plural_model}?"
+      succesfully_restored:
+        one: "Se ha restaurado 1 %{model}"
+        other: "Se han restaurado %{count} %{plural_model}"
+    archived: "Archivado"
+    non_archived: "No Archivado"
+    restore_model: "Restaurar %{model}"
+    restore: "Restaurar"
+    restore_confirmation: "¿Estás seguro de que quieres restaurar esto?"
+    something_wrong: "Algo salió mal. Inténtalo de nuevo."

@@ -50,3 +50,15 @@ gem 'hirb'
 
 # CORS
 gem 'rack-cors', :require => 'rack/cors'
+
+# ActiveAdmin
+gem 'devise'
+gem 'activeadmin'
+gem 'arctic_admin'
+
+# Localization
+gem 'rails-i18n'
+
+# Soft-Delete
+gem "paranoia", "~> 2.2"
+gem "active_admin_paranoia", '~> 1.0.11'

@@ -1,14 +1,14 @@
-# README
+rai# README
 
 Instrucciones para utilizar el API.
 
 ## Para iniciar el servidor de Rails:
 
-_Puerto 3000 (por defecto):_
+#### Puerto 3000 (por defecto):
 
 rails s
 
-_Cualquier otro puerto:_
+#### Cualquier otro puerto:
 
 rails s -p 3001
 
@@ -16,11 +16,23 @@ rails s -p 3001
 
 rails db:reset
 
+## Para ejecutar las migraciones:
+
+rails db:migrate
+
 ## Para hacer requests:
 
-_Pacientes:_
+#### Pacientes:
 
 - Obtener todos los pacientes (GET): /api/patients
 - Crear (POST): /api/patients
 - Obtener un paciente (GET): /api/patients/id
 - Actualizar un paciente (PUT): /api/patients/id
+
+#### Usuarios:
+
+**NOTA:** Para obtener y crear los usuarios se necesita un parámetro **role**, que puede ser **doctor**, **enfermera** o **secretaria**
+
+- Obtener todos los usuarios (GET): /api/users
+- Crear (POST): /api/users
+- Obtener un usuario (GET): /api/users/id

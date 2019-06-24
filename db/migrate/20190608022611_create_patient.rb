@@ -22,6 +22,7 @@ class CreatePatient < ActiveRecord::Migration[5.2]
       t.string :home_insurance_carrier
       t.string :recreation_place
       t.string :recreation_frequency
+      t.string :religion
     end
   end
 end

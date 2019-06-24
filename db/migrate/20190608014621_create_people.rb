@@ -12,7 +12,6 @@ class CreatePeople < ActiveRecord::Migration[5.2]
       t.string :nationality
       t.string :email
       t.string :civil_status
-      t.string :religion
       t.timestamps
     end
   end

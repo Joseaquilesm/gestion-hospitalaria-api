@@ -1,5 +1,4 @@
 class Patient < ApplicationRecord
-  validates :person_id, presence: true
   validates :insurance_carrier, presence: true, if: -> {insured == true}
   validates :insurance_number, presence: true, if: -> {insured == true}
   # Verificar con lo que envia React
@@ -11,6 +10,14 @@ class Patient < ApplicationRecord
   # Esperar que se decida lo del tipo de vivienda
   validates :cohabitants_number, numericality: {greater_than_or_equal_to: 0}
   validates :home_insurance_carrier, presence: true, if: -> {home_insurance == true}
+  validates :religion, presence: true
 
-  belongs_to :person
+  # Hay que agregar los valores por default
+
+  belongs_to :person, optional: true, dependent: :destroy
+  has_one :clinic_history, dependent: :destroy
+
+  def display_name
+    person.identification + ' - ' + person.name + ' ' + person.last_name
+  end
 end
