@@ -10,6 +10,7 @@ class UsersController < ApiController
       attrs.merge!(specialty: user.specialty.name) unless user.specialty.nil?
       @obj.push(attrs)
     end
+    render json: {admins: @obj} if params[:role] == 'admin'
     render json: {doctors: @obj} if params[:role] == 'doctor'
     render json: {nurses: @obj} if params[:role] == 'enfermera'
     render json: {secretaries: @obj} if params[:role] == 'secretaria'
@@ -25,6 +26,7 @@ class UsersController < ApiController
     @user.person = @person if @person.id?
     @user.save if @user.valid? && @person.id?
     if @user.id?
+      @user.update(work_day: WorkDay.create(work_day_params))
       render status: 200, json: {
           message: "El usuario se ha creado exitosamente!"
       }
@@ -52,5 +54,10 @@ class UsersController < ApiController
 
   def user_params
     params.permit(:role, :specialty, :entry_time, :departure_time)
+  end
+
+  def work_day_params
+    params.permit(:monday, :tuesday, :wednesday, :thursday, :friday,
+                  :saturday, :sunday)
   end
 end
