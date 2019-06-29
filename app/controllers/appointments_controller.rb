@@ -2,7 +2,20 @@ class AppointmentsController < ApiController
 
   def index
     @appointments = Appointment.all
-    render json: {appointments: @appointments}
+    @obj = []
+    @appointments.each do |appointment|
+      attrs = appointment.attributes
+      @patient = Patient.find_by_id(appointment.patient_id)
+      @doctor = User.find_by_id(appointment.doctor_id)
+      attrs.merge!(doctor_identificacion: @doctor.person.identification)
+      attrs.merge!(doctor_name: @doctor.person.name)
+      attrs.merge!(doctor_last_name: @doctor.person.last_name)
+      attrs.merge!(patient_identificacion: @patient.person.identification)
+      attrs.merge!(patient_name: @patient.person.name)
+      attrs.merge!(patient_last_name: @patient.person.last_name)
+      @obj.push(attrs)
+    end
+    render json: {appointments: @obj}
   end
 
 
@@ -25,6 +38,14 @@ class AppointmentsController < ApiController
       else
         render json: {error: true, messages: @appointment.errors}
       end
+    end
+  end
+
+  def show
+    @appointment = Appointment.find_by_id(params[:id])
+    render json: {error: true, message: 'La cita no existe'} if @appointment.nil?
+    unless @appointment.nil?
+      render json: {cita: @appointment}
     end
   end
 

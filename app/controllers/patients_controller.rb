@@ -31,28 +31,28 @@ class PatientsController < ApiController
 
   def show
     @patient = Patient.find_by_id(params[:id])
-    if @patient.nil?
-      render json: {error: true, message: "El paciente no existe"}
-    else
+    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    unless @patient.nil?
       @obj = @patient.person.attributes.merge(@patient.attributes.except('person_id'))
-      render json: {patient: @obj}
+      render status: 200, json: {
+          patient: @obj
+      }
     end
   end
 
   def update
     @patient = Patient.find_by_id(params[:id])
-    if @patient.nil?
-      render json: {errors: "El paciente no existe"}
-    else
-      @person = @patient.person
-      if @person.update_attributes(person_params)
-        if @patient.update_attributes(patient_params)
-          render json: {message: "Se han actualizado los datos del paciente exitosamente!"}
-        else
-          render json: {error: true, messages: @patient.errors}
-        end
-      else
-        render json: {error: true, messages: @person.errors}
+    render json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    unless @patient.nil?
+      render json: {message: 'Se han actualizado los datos del paciente exitosamente!'} if @patient.person.update(person_params) &&
+          @patient.update(patient_params)
+      unless @patient.person.errors.empty? && @patient.errors.empty?
+        @messages = {}
+        fill_errors(@patient.person.errors, @messages)
+        fill_errors(@patient.errors, @messages)
+        render status: 200, json: {
+            error: true, messages: @messages
+        }
       end
     end
   end

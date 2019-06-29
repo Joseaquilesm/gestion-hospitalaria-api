@@ -8,6 +8,7 @@ class UsersController < ApiController
       attrs.merge!(user.attributes.except('person_id', 'specialty_id', 'role_id'))
       attrs.merge!(role: user.role.name)
       attrs.merge!(specialty: user.specialty.name) unless user.specialty.nil?
+      attrs.merge!(user.work_day.attributes) unless user.work_day.nil?
       @obj.push(attrs)
     end
     render json: {admins: @obj} if params[:role] == 'admin'
@@ -41,12 +42,32 @@ class UsersController < ApiController
   end
 
   def show
-    @user = User.find_by(params[:id])
-    if @user.nil?
-      render json: {error: 'User does not exist'}
-    else
+    @user = User.find_by_id(params[:id])
+    render status: 200, json: {error: true, message: 'El usuario no existe'} if @user.nil?
+    unless @user.nil?
       @obj = @user.person.attributes.merge(@user.attributes.except('person_id'))
-      render json: {user: @obj}, status: :ok
+      @obj.merge!(@user.work_day.attributes) unless @user.work_day.nil?
+      render status: 200, json: {
+          user: @obj
+      }
+    end
+  end
+
+  def update
+    @user = User.find_by_id(params[:id])
+    render json: {error: true, message: 'El usuario no existe'} if @user.nil?
+    unless @user.nil?
+      render json: {message: 'Se han actualizado los datos del usuario exitosamente!'} if @user.person.update(person_params) &&
+          @user.update(patient_params) && @user.work_day.update(work_day_params)
+      unless @user.person.errors.empty? && @user.errors.empty? && @user.work_day.errors.empty?
+        @messages = {}
+        fill_errors(@user.person.errors, @messages)
+        fill_errors(@user.errors, @messages)
+        fill_errors(@user.work_day.errors, @messages)
+        render status: 200, json: {
+            error: true, messages: @messages
+        }
+      end
     end
   end
 

@@ -36,3 +36,4 @@ rails db:migrate
 - Obtener todos los usuarios (GET): /api/users
 - Crear (POST): /api/users
 - Obtener un usuario (GET): /api/users/id
+- Actualizar un usuario (PUT): /api/users/id
