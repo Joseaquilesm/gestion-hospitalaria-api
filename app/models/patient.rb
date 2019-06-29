@@ -14,7 +14,7 @@ class Patient < ApplicationRecord
 
   # Hay que agregar los valores por default
 
-  belongs_to :person, optional: true, dependent: :destroy
+  belongs_to :person, dependent: :destroy
   has_one :clinic_history, dependent: :destroy
 
   def display_name

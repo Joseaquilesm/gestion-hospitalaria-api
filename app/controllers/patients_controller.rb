@@ -9,23 +9,18 @@ class PatientsController < ApiController
   end
 
   def create
-    @person = Person.new(person_params)
-    @patient = Patient.new(patient_params)
-    @person.save if @person.valid? && @patient.valid?
-    @patient.person = @person if @person.id?
-    @patient.save if @patient.valid? && @person.id?
-    if @patient.id?
-      ClinicHistory.create(toxic_habit: ToxicHabit.create, patient: @patient)
-      render status: 200, json: {
-          message: "El paciente ha sido creado exitosamente!"
-      }
-    else
-      @messages = {}
-      fill_errors(@person.errors, @messages)
-      fill_errors(@patient.errors, @messages)
-      render status: 200, json: {
-          error: true, messages: @messages
-      }
+    begin
+      @person = Person.new(person_params)
+      @patient = Patient.new(patient_params)
+      ActiveRecord::Base.transaction do
+        @person.save!
+        @patient.person = @person
+        @patient.save!
+      end
+      render status: 200, json: {message: 'Paciente creado exitosamente!'}
+    rescue
+      @messages = get_errors(@person, @patient)
+      render status: 200, json: {error: true, messages: @messages}
     end
   end
 
@@ -42,17 +37,18 @@ class PatientsController < ApiController
 
   def update
     @patient = Patient.find_by_id(params[:id])
-    render json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
     unless @patient.nil?
-      render json: {message: 'Se han actualizado los datos del paciente exitosamente!'} if @patient.person.update(person_params) &&
-          @patient.update(patient_params)
-      unless @patient.person.errors.empty? && @patient.errors.empty?
-        @messages = {}
-        fill_errors(@patient.person.errors, @messages)
-        fill_errors(@patient.errors, @messages)
-        render status: 200, json: {
-            error: true, messages: @messages
-        }
+      @person = @patient.person
+      begin
+        ActiveRecord::Base.transaction do
+          @person.update!(person_params)
+          @patient.update!(patient_params)
+        end
+        render status: 200, json: {message: 'Paciente actualizado exitosamente!'}
+      rescue
+        @messages = get_errors(@patient, @person)
+        render status: 200, json: {error: true, messages: @messages}
       end
     end
   end
@@ -65,5 +61,12 @@ class PatientsController < ApiController
                   :occupation, :fixed_income, :working_family_members, :working_hours,
                   :housing_type, :cohabitants_number, :home_insurance, :home_insurance_carrier,
                   :recreation_place, :recreation_frequency, :religion)
+  end
+
+  def get_errors(person, patient)
+    messages = {}
+    fill_errors(person.errors, messages)
+    fill_errors(patient.errors, messages)
+    messages
   end
 end
