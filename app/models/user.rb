@@ -11,6 +11,7 @@ class User < ApplicationRecord
 
   has_many :vacations
   has_many :appointments
+  has_many :references
   # has_and_belongs_to_many :vacation
   # has_and_belongs_to_many :medic_license
   # has_and_belongs_to_many :permission

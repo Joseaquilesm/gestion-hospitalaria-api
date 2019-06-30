@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_21_022034) do
+ActiveRecord::Schema.define(version: 2019_06_30_173140) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -42,15 +42,30 @@ ActiveRecord::Schema.define(version: 2019_06_21_022034) do
     t.text "motive"
     t.date "appointment_date"
     t.string "hour_date"
+    t.boolean "previous_assistance"
+    t.boolean "accompanied"
+    t.string "consultation_type"
+    t.string "familiar_name"
+    t.string "familiar_relation"
+    t.string "familiar_phone_number"
     t.integer "doctor_id"
     t.integer "secretary_id"
     t.integer "patient_id"
+    t.integer "reference_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["doctor_id"], name: "index_appointments_on_doctor_id"
     t.index ["patient_id"], name: "index_appointments_on_patient_id"
+    t.index ["reference_id"], name: "index_appointments_on_reference_id"
     t.index ["secretary_id"], name: "index_appointments_on_secretary_id"
+  end
+
+  create_table "centers", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "clinic_histories", force: :cascade do |t|
@@ -69,6 +84,15 @@ ActiveRecord::Schema.define(version: 2019_06_21_022034) do
     t.index ["toxic_habit_id"], name: "index_clinic_histories_on_toxic_habit_id"
   end
 
+  create_table "doses", force: :cascade do |t|
+    t.integer "medicine_id"
+    t.string "frequency"
+    t.integer "days"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medicine_id"], name: "index_doses_on_medicine_id"
+  end
+
   create_table "medic_licenses", force: :cascade do |t|
     t.date "start_date"
     t.date "end_date"
@@ -76,6 +100,55 @@ ActiveRecord::Schema.define(version: 2019_06_21_022034) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_medic_licenses_on_user_id"
+  end
+
+  create_table "medical_consultations", force: :cascade do |t|
+    t.integer "appointment_id"
+    t.integer "medical_order_id"
+    t.integer "reference_id"
+    t.integer "patient_control_id"
+    t.text "current_disease_history"
+    t.text "analytics_and_procedures"
+    t.text "diagnosis"
+    t.text "consultation_summary"
+    t.text "background"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appointment_id"], name: "index_medical_consultations_on_appointment_id"
+    t.index ["medical_order_id"], name: "index_medical_consultations_on_medical_order_id"
+    t.index ["patient_control_id"], name: "index_medical_consultations_on_patient_control_id"
+    t.index ["reference_id"], name: "index_medical_consultations_on_reference_id"
+  end
+
+  create_table "medical_orders", force: :cascade do |t|
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "medicines", force: :cascade do |t|
+    t.string "name"
+    t.string "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "order_doses", force: :cascade do |t|
+    t.integer "medical_order_id"
+    t.integer "dose_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dose_id"], name: "index_order_doses_on_dose_id"
+    t.index ["medical_order_id"], name: "index_order_doses_on_medical_order_id"
+  end
+
+  create_table "patient_controls", force: :cascade do |t|
+    t.float "heart_rate"
+    t.float "blood_pressure"
+    t.float "weight"
+    t.text "observation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "patients", force: :cascade do |t|
@@ -127,6 +200,17 @@ ActiveRecord::Schema.define(version: 2019_06_21_022034) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_permissions_on_user_id"
+  end
+
+  create_table "references", force: :cascade do |t|
+    t.boolean "internal_reference"
+    t.integer "center_id"
+    t.integer "doctor_id"
+    t.string "external_reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["center_id"], name: "index_references_on_center_id"
+    t.index ["doctor_id"], name: "index_references_on_doctor_id"
   end
 
   create_table "roles", force: :cascade do |t|

@@ -57,7 +57,8 @@ class AppointmentsController < ApiController
   private
 
   def appointment_params
-    params.permit(:appointment_date, :hour_date, :motive, :doctor_id, :secretary_id, :patient_id)
+    params.permit(:appointment_date, :hour_date, :motive, :doctor_id, :secretary_id, :patient_id, :previous_assistance,
+                  :accompanied, :consultation_type, :familiar_name, :familiar_relation, :familiar_phone_number, :reference_id)
   end
 
   def get_appointments(appointments)
