@@ -17,7 +17,7 @@ class UsersController < ApiController
     @user = User.new(user_params.except(:role, :specialty))
     @work_day = WorkDay.new(work_day_params)
     @user.role = Role.find_by_name(params[:role])
-    if @user.role.name.equal?('doctor')
+    if @user.role.name == 'doctor'
       @user.specialty = Specialty.find_by_name(params[:specialty])
     end
     begin
