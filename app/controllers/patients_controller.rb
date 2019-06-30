@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PatientsController < ApiController
   def index
     @patients = Patient.all
@@ -5,39 +7,39 @@ class PatientsController < ApiController
     @patients.each do |patient|
       @obj.push(patient.person.attributes.merge(patient.attributes.except('person_id')))
     end
-    render status: 200, json: {patients: @obj}
+    render status: 200, json: { patients: @obj }
   end
 
   def create
+    @person = Person.new(person_params)
+    @patient = Patient.new(patient_params)
     begin
-      @person = Person.new(person_params)
-      @patient = Patient.new(patient_params)
       ActiveRecord::Base.transaction do
         @person.save!
         @patient.person = @person
         @patient.save!
       end
-      render status: 200, json: {message: 'Paciente creado exitosamente!'}
-    rescue
+      render status: 200, json: { message: 'Paciente creado exitosamente!' }
+    rescue StandardError
       @messages = get_errors(@person, @patient)
-      render status: 200, json: {error: true, messages: @messages}
+      render status: 200, json: { error: true, messages: @messages }
     end
   end
 
   def show
     @patient = Patient.find_by_id(params[:id])
-    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    render status: 200, json: { error: true, message: 'El paciente no existe' } if @patient.nil?
     unless @patient.nil?
       @obj = @patient.person.attributes.merge(@patient.attributes.except('person_id'))
       render status: 200, json: {
-          patient: @obj
+        patient: @obj
       }
     end
   end
 
   def update
     @patient = Patient.find_by_id(params[:id])
-    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    render status: 200, json: { error: true, message: 'El paciente no existe' } if @patient.nil?
     unless @patient.nil?
       @person = @patient.person
       begin
@@ -45,10 +47,10 @@ class PatientsController < ApiController
           @person.update!(person_params)
           @patient.update!(patient_params)
         end
-        render status: 200, json: {message: 'Paciente actualizado exitosamente!'}
-      rescue
+        render status: 200, json: { message: 'Paciente actualizado exitosamente!' }
+      rescue StandardError
         @messages = get_errors(@patient, @person)
-        render status: 200, json: {error: true, messages: @messages}
+        render status: 200, json: { error: true, messages: @messages }
       end
     end
   end
