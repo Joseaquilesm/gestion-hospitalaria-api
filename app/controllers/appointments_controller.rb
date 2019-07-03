@@ -1,8 +1,11 @@
 class AppointmentsController < ApiController
 
   def index
+    @obj = []
     appointments = Appointment.all
-    @obj = get_appointments(appointments)
+    appointments.each do |appointment|
+      @obj.push(get_appointment(appointment))
+    end
     render json: {appointments: @obj}
   end
 
@@ -37,7 +40,8 @@ class AppointmentsController < ApiController
     @appointment = Appointment.find_by_id(params[:id])
     render json: {error: true, message: 'La cita no existe'} if @appointment.nil?
     unless @appointment.nil?
-      render json: {appointment: @appointment}
+      @obj = get_appointment(@appointment)
+      render json: {appointment: @obj}
     end
   end
 
@@ -61,20 +65,18 @@ class AppointmentsController < ApiController
                   :accompanied, :consultation_type, :familiar_name, :familiar_relation, :familiar_phone_number, :reference_id)
   end
 
-  def get_appointments(appointments)
+  def get_appointment(appointment)
     obj = []
-    appointments.each do |appointment|
-      attrs = appointment.attributes
-      patient = Patient.find_by_id(appointment.patient_id)
-      doctor = User.find_by_id(appointment.doctor_id)
-      attrs.merge!(doctor_identificacion: doctor.person.identification)
-      attrs.merge!(doctor_name: doctor.person.name)
-      attrs.merge!(doctor_last_name: doctor.person.last_name)
-      attrs.merge!(patient_identificacion: patient.person.identification)
-      attrs.merge!(patient_name: patient.person.name)
-      attrs.merge!(patient_last_name: patient.person.last_name)
-      obj.push(attrs)
-    end
+    attrs = appointment.attributes
+    patient = Patient.find_by_id(appointment.patient_id)
+    doctor = User.find_by_id(appointment.doctor_id)
+    attrs.merge!(doctor_identificacion: doctor.person.identification)
+    attrs.merge!(doctor_name: doctor.person.name)
+    attrs.merge!(doctor_last_name: doctor.person.last_name)
+    attrs.merge!(patient_identificacion: patient.person.identification)
+    attrs.merge!(patient_name: patient.person.name)
+    attrs.merge!(patient_last_name: patient.person.last_name)
+    obj.push(attrs)
     obj
   end
 
