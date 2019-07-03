@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_30_173140) do
+ActiveRecord::Schema.define(version: 2019_07_03_040609) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -38,6 +38,35 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "analytics", force: :cascade do |t|
+    t.boolean "hemograma"
+    t.boolean "glicemia"
+    t.boolean "urea"
+    t.boolean "creatinina"
+    t.boolean "alt"
+    t.boolean "ast"
+    t.boolean "ggt"
+    t.boolean "na"
+    t.boolean "k"
+    t.boolean "mg"
+    t.boolean "ca"
+    t.boolean "t4libre"
+    t.boolean "tsh"
+    t.boolean "albumina"
+    t.boolean "hba1"
+    t.boolean "amonio"
+    t.boolean "prolactina"
+    t.boolean "hiv"
+    t.boolean "hcv"
+    t.boolean "hbsag"
+    t.boolean "tac_craneo"
+    t.boolean "ekg"
+    t.boolean "eeg"
+    t.boolean "irm_encefalo"
+    t.boolean "espectroscopia"
+    t.text "otros"
+  end
+
   create_table "appointments", force: :cascade do |t|
     t.text "motive"
     t.date "appointment_date"
@@ -51,14 +80,14 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
     t.integer "doctor_id"
     t.integer "secretary_id"
     t.integer "patient_id"
-    t.integer "reference_id"
+    t.integer "specialty_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["doctor_id"], name: "index_appointments_on_doctor_id"
     t.index ["patient_id"], name: "index_appointments_on_patient_id"
-    t.index ["reference_id"], name: "index_appointments_on_reference_id"
     t.index ["secretary_id"], name: "index_appointments_on_secretary_id"
+    t.index ["specialty_id"], name: "index_appointments_on_specialty_id"
   end
 
   create_table "centers", force: :cascade do |t|
@@ -84,6 +113,14 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
     t.index ["toxic_habit_id"], name: "index_clinic_histories_on_toxic_habit_id"
   end
 
+  create_table "consultation_bills", force: :cascade do |t|
+    t.integer "medical_consultation_id"
+    t.float "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medical_consultation_id"], name: "index_consultation_bills_on_medical_consultation_id"
+  end
+
   create_table "doses", force: :cascade do |t|
     t.integer "medicine_id"
     t.string "frequency"
@@ -105,19 +142,45 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
   create_table "medical_consultations", force: :cascade do |t|
     t.integer "appointment_id"
     t.integer "medical_order_id"
-    t.integer "reference_id"
     t.integer "patient_control_id"
+    t.integer "specialty_id"
+    t.integer "analytic_id"
+    t.text "consultation_motive"
     t.text "current_disease_history"
-    t.text "analytics_and_procedures"
+    t.text "psi_background"
+    t.text "childhood_background"
+    t.text "teen_background"
+    t.text "adult_background"
+    t.text "medicines_background"
+    t.text "allergies_background"
+    t.text "traumatic_background"
+    t.text "surgical_background"
+    t.text "psychosexual_sphere"
+    t.text "hospitalizations"
+    t.text "toxic_habits"
+    t.text "mother_background"
+    t.text "father_background"
+    t.text "siblings_background"
+    t.text "spouse_background"
+    t.text "others_background"
+    t.text "premorbid_personality"
+    t.text "family_constellation"
+    t.text "axis_1"
+    t.text "axis_2"
+    t.text "axis_3"
+    t.text "axis_4"
+    t.text "axis_5"
+    t.text "axis_extra"
     t.text "diagnosis"
+    t.text "therapy"
     t.text "consultation_summary"
-    t.text "background"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["analytic_id"], name: "index_medical_consultations_on_analytic_id"
     t.index ["appointment_id"], name: "index_medical_consultations_on_appointment_id"
     t.index ["medical_order_id"], name: "index_medical_consultations_on_medical_order_id"
     t.index ["patient_control_id"], name: "index_medical_consultations_on_patient_control_id"
-    t.index ["reference_id"], name: "index_medical_consultations_on_reference_id"
+    t.index ["specialty_id"], name: "index_medical_consultations_on_specialty_id"
   end
 
   create_table "medical_orders", force: :cascade do |t|
@@ -129,8 +192,10 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
   create_table "medicines", force: :cascade do |t|
     t.string "name"
     t.string "quantity"
+    t.integer "center_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["center_id"], name: "index_medicines_on_center_id"
   end
 
   create_table "order_doses", force: :cascade do |t|
@@ -200,17 +265,6 @@ ActiveRecord::Schema.define(version: 2019_06_30_173140) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_permissions_on_user_id"
-  end
-
-  create_table "references", force: :cascade do |t|
-    t.boolean "internal_reference"
-    t.integer "center_id"
-    t.integer "doctor_id"
-    t.string "external_reference"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["center_id"], name: "index_references_on_center_id"
-    t.index ["doctor_id"], name: "index_references_on_doctor_id"
   end
 
   create_table "roles", force: :cascade do |t|

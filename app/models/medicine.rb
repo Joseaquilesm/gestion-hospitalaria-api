@@ -3,4 +3,5 @@ class Medicine < ApplicationRecord
   validates :quantity, presence: true
 
   has_many :doses
+  belongs_to :center, optional: true
 end

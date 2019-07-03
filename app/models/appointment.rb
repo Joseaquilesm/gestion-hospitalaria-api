@@ -10,7 +10,6 @@ class Appointment < ApplicationRecord
   belongs_to :doctor, class_name: 'User'
   belongs_to :secretary, class_name: 'User'
   belongs_to :patient
-  belongs_to :reference, optional: true
   has_one :medical_consultation
 
   acts_as_paranoid

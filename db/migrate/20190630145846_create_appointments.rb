@@ -13,7 +13,7 @@ class CreateAppointments < ActiveRecord::Migration[5.2]
       t.belongs_to :doctor, class: 'User'
       t.belongs_to :secretary, class: 'User'
       t.references :patient, foreign_key: true
-      t.references :reference, foreign_key: true
+      t.references :specialty, foreign_key: true
       t.timestamp :deleted_at
       t.timestamps
     end
