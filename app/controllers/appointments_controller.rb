@@ -37,7 +37,7 @@ class AppointmentsController < ApiController
     @appointment = Appointment.find_by_id(params[:id])
     render json: {error: true, message: 'La cita no existe'} if @appointment.nil?
     unless @appointment.nil?
-      render json: {cita: @appointment}
+      render json: {appointment: @appointment}
     end
   end
 
