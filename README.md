@@ -38,6 +38,12 @@ rails db:migrate
 - Obtener un usuario (GET): /api/users/id
 - Actualizar un usuario (PUT): /api/users/id
 
+**NUEVO:**
+- Obtener administradores (GET): /api/admins
+- Obtener doctores (GET): /api/doctors
+- Obtener enfermeras (GET): /api/nurses
+- Obtener secretarias (GET): /api/secretaries
+
 ### Consultas Médicas
 
 **NOTA:** Para obtener todas las consultas de un paciente, se necesita pasar el id del paciente en un parámetro **patient_id**. Para crear una consulta se necesita pasar un parámetro **appointment_id** con el id de la cita creada anteriormente.
