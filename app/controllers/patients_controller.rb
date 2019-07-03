@@ -2,10 +2,11 @@
 
 class PatientsController < ApiController
   def index
-    @patients = Patient.all
+    patients = Patient.all
     @obj = []
-    @patients.each do |patient|
-      @obj.push(patient.person.attributes.merge(patient.attributes.except('person_id')))
+    patients.each do |patient|
+      @p = fill_info(patient)
+      @obj.push(@p)
     end
     render status: 200, json: { patients: @obj }
   end
@@ -27,13 +28,12 @@ class PatientsController < ApiController
   end
 
   def show
-    @patient = Patient.find_by_id(params[:id])
-    render status: 200, json: { error: true, message: 'El paciente no existe' } if @patient.nil?
-    unless @patient.nil?
-      @obj = @patient.person.attributes.merge(@patient.attributes.except('person_id'))
-      render status: 200, json: {
-        patient: @obj
-      }
+    patient = Patient.find_by_id(params[:id])
+    render status: 200, json: { error: true, message: 'El paciente no existe' } if patient.nil?
+    @obj = {}
+    unless patient.nil?
+      @obj = fill_info(patient)
+      render status: 200, json: { patient: @obj }
     end
   end
 
@@ -70,5 +70,13 @@ class PatientsController < ApiController
     fill_errors(person.errors, messages)
     fill_errors(patient.errors, messages)
     messages
+  end
+
+  def fill_info(patient)
+    obj = {}
+    obj.merge!(id: patient.id)
+    obj.merge!(patient.person.attributes.except('id'))
+    obj.merge!(patient.attributes.except('person_id'))
+    obj
   end
 end

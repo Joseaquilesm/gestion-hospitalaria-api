@@ -4,7 +4,11 @@ class UsersController < ApiController
   def index
     users_filtered = User.all unless params[:role].present?
     users_filtered = User.where(role: Role.find_by_name(params[:role])) if params[:role].present?
-    @data = get_all_data(users_filtered)
+    @obj = []
+    users_filtered.each do |user|
+      @attrs = fill_info(user)
+      @obj.push(@attrs)
+    end
     render json: { admins: @obj } if params[:role] == 'admin'
     render json: { doctors: @obj } if params[:role] == 'doctor'
     render json: { nurses: @obj } if params[:role] == 'enfermera'
@@ -36,14 +40,11 @@ class UsersController < ApiController
   end
 
   def show
-    @user = User.find_by_id(params[:id])
-    render status: 200, json: { error: true, message: 'El usuario no existe' } if @user.nil?
-    unless @user.nil?
-      @obj = @user.person.attributes.merge(@user.attributes.except('person_id'))
-      @obj.merge!(@user.work_day.attributes) unless @user.work_day.nil?
-      render status: 200, json: {
-        user: @obj
-      }
+    user = User.find_by_id(params[:id])
+    render status: 200, json: { error: true, message: 'El usuario no existe' } if user.nil?
+    unless user.nil?
+      @obj = fill_info(user)
+      render status: 200, json: { user: @obj }
     end
   end
 
@@ -78,23 +79,21 @@ class UsersController < ApiController
                   :saturday, :sunday)
   end
 
-  def get_all_data(users)
-    @obj = []
-    users.each do |user|
-      attrs = user.person.attributes
-      attrs.merge!(user.attributes.except('person_id', 'specialty_id', 'role_id'))
-      attrs.merge!(role: user.role.name)
-      attrs.merge!(specialty: user.specialty.name) unless user.specialty.nil?
-      attrs.merge!(user.work_day.attributes) unless user.work_day.nil?
-      @obj.push(attrs)
-    end
-  end
-
   def get_errors(person, user, work_day)
     messages = {}
     fill_errors(person.errors, messages)
     fill_errors(user.errors, messages)
     fill_errors(work_day.errors, messages)
     messages
+  end
+
+  def fill_info(user)
+    obj = {}
+    obj.merge!(id: user.id)
+    obj.merge!(user.person.attributes.except('id'))
+    obj.merge!(user.attributes.except('id', 'person_id', 'specialty_id', 'role_id'))
+    obj.merge!(role: user.role.name)
+    obj.merge!(user.work_day.attributes.except('id')) unless user.work_day.nil?
+    obj
   end
 end
