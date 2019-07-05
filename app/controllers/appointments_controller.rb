@@ -66,18 +66,16 @@ class AppointmentsController < ApiController
   end
 
   def get_appointment(appointment)
-    obj = []
-    attrs = appointment.attributes
+    obj = {}
+    obj.merge!(appointment.attributes)
     patient = Patient.find_by_id(appointment.patient_id)
     doctor = User.find_by_id(appointment.doctor_id)
-    attrs.merge!(doctor_identificacion: doctor.person.identification)
-    attrs.merge!(doctor_name: doctor.person.name)
-    attrs.merge!(doctor_last_name: doctor.person.last_name)
-    attrs.merge!(patient_identificacion: patient.person.identification)
-    attrs.merge!(patient_name: patient.person.name)
-    attrs.merge!(patient_last_name: patient.person.last_name)
-    obj.push(attrs)
+    obj.merge!(doctor_identificacion: doctor.person.identification)
+    obj.merge!(doctor_name: doctor.person.name)
+    obj.merge!(doctor_last_name: doctor.person.last_name)
+    obj.merge!(patient_identificacion: patient.person.identification)
+    obj.merge!(patient_name: patient.person.name)
+    obj.merge!(patient_last_name: patient.person.last_name)
     obj
   end
-
 end

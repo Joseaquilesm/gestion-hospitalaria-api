@@ -6,7 +6,7 @@ class UsersController < ApiController
     users_filtered = User.where(role: Role.find_by_name(params[:role])) if params[:role].present?
     @obj = []
     users_filtered.each do |user|
-      @attrs = fill_info(user)
+      @attrs = get_info(user)
       @obj.push(@attrs)
     end
     render json: {admins: @obj} if params[:role] == 'admin'
@@ -17,23 +17,27 @@ class UsersController < ApiController
   end
 
   def get_admins
-    @admins = User.where(role: 'admin')
-    render status: 200, json: {admins: @admins}
+    @admins = User.where(role: Role.find_by_name('admin'))
+    @obj = get_all_info(@admins)
+    render status: 200, json: {admins: @obj}
   end
 
   def get_doctors
-    @doctors = User.where(role: 'doctor')
-    render status: 200, json: {doctors: @doctors}
+    @doctors = User.where(role: Role.find_by_name('doctor'))
+    @obj = get_all_info(@doctors)
+    render status: 200, json: {doctors: @obj}
   end
 
   def get_nurses
-    @nurses = User.where(role: 'nurses')
-    render status: 200, json: {nurses: @nurses}
+    @nurses = User.where(role: Role.find_by_name('enfermera'))
+    @obj = get_all_info(@nurses)
+    render status: 200, json: {nurses: @obj}
   end
 
   def get_secretaries
-    @secretaries = User.where(role: 'secretaries')
-    render status: 200, json: {secretaries: @secretaries}
+    @secretaries = User.where(role: Role.find_by_name('secretaria'))
+    @obj = get_all_info(@secretaries)
+    render status: 200, json: {secretaries: @obj}
   end
 
   def create
@@ -63,7 +67,7 @@ class UsersController < ApiController
     user = User.find_by_id(params[:id])
     render status: 200, json: {error: true, message: 'El usuario no existe'} if user.nil?
     unless user.nil?
-      @obj = fill_info(user)
+      @obj = get_info(user)
       render status: 200, json: {user: @obj}
     end
   end
@@ -107,7 +111,15 @@ class UsersController < ApiController
     messages
   end
 
-  def fill_info(user)
+  def get_all_info(users)
+    obj = []
+    users.each do |user|
+      obj.push(get_info(user))
+    end
+    obj
+  end
+
+  def get_info(user)
     obj = {}
     obj.merge!(id: user.id)
     obj.merge!(user.person.attributes.except('id'))
