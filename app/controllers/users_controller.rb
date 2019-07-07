@@ -28,6 +28,11 @@ class UsersController < ApiController
     render status: 200, json: {doctors: @obj}
   end
 
+  def get_doctor
+    @doctor = User.find_by_id(params[:id])
+    render status: 200, json: {doctor: @doctor}
+  end
+
   def get_nurses
     @nurses = User.where(role: Role.find_by_name('enfermera'))
     @obj = get_all_info(@nurses)

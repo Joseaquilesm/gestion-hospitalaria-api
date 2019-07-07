@@ -41,6 +41,7 @@ rails db:migrate
 **NUEVO:**
 - Obtener administradores (GET): /api/admins
 - Obtener doctores (GET): /api/doctors
+- Obtener un solo doctor (GET): /api/doctors/id
 - Obtener enfermeras (GET): /api/nurses
 - Obtener secretarias (GET): /api/secretaries
 
@@ -50,3 +51,5 @@ rails db:migrate
 
 - Obtener todas las consultas de un paciente (GET): /api/medical_consultation
 - Crear consulta médica (POST): /api/medical_consultation
+- Obtener una consulta médica (GET): /api/medical_consultation/id
+- Obtener todas las consultas de un doctor (GET): /api/doctors/id/medical_consultations

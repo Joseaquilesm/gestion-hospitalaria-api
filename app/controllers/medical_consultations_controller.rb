@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MedicalConsultationsController < ApiController
   def index
     if params[:patient_id].present?
@@ -22,6 +20,25 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {message: 'La consulta se ha registrado exitosamente!'}
     rescue StandardError
       render status: 200, json: {error: true, messages: @medical_consultation.errors}
+    end
+  end
+
+  def show
+    @medical_consultation = MedicalConsultation.find_by_id(params[:id])
+    if @medical_consultation.nil?
+      render status: 200, json: {error: true, message: 'La consulta no existe!'}
+    else
+      render status: 200, json: {medical_consultation: @medical_consultation}
+    end
+  end
+
+  def get_by_doctor
+    @doctor = User.find_by_id(params[:id])
+    if @doctor.nil?
+      render status: 200, json: {error: true, message: 'El doctor no existe.'}
+    else
+      @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
+      render status: 200, json: {medical_consultations: @medical_consultations}
     end
   end
 
