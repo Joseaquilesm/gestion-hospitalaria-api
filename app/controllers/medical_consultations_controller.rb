@@ -9,17 +9,25 @@ class MedicalConsultationsController < ApiController
   end
 
   def create
+    @analytic = Analytic.new(analytic_params)
     @medical_consultation = MedicalConsultation.new(medical_consultation_params)
+    @consultation_bill = ConsultationBill.new(price: 0.0);
     begin
       ActiveRecord::Base.transaction do
-        @analytic = Analytic.create!(analytic_params)
+        @analytic.save!
+        @consultation_bill.save!
         @medical_consultation.analytic = @analytic
         @medical_consultation.save!
-        @consultation_bill = ConsultationBill.create!(price: 0.0)
+        @consultation_bill.medical_consultation = @medical_consultation
+        @consultation_bill.save!
       end
       render status: 200, json: {message: 'La consulta se ha registrado exitosamente!'}
     rescue StandardError
-      render status: 200, json: {error: true, messages: @medical_consultation.errors}
+      @obj = {}
+      fill_errors(@analytic.errors, @obj)
+      fill_errors(@medical_consultation.errors, @obj)
+      fill_errors(@consultation_bill.errors, @obj)
+      render status: 200, json: {error: true, messages: @obj}
     end
   end
 
@@ -45,7 +53,7 @@ class MedicalConsultationsController < ApiController
   private
 
   def medical_consultation_params
-    params.permit(:appointment_id, :medical_order_id, :patient_control_id, :consultation_motive, :current_disease_history,
+    params.permit(:appointment_id, :medical_order_id, :patient_control_id, :specialty_id, :consultation_motive, :current_disease_history,
                   :psi_background, :childhood_background, :teen_background, :adult_background, :medicines_background, :allergies_background,
                   :traumatic_background, :surgical_background, :psychosexual_sphere, :hospitalizations, :toxic_habits, :mother_background,
                   :father_background, :siblings_background, :spouse_background, :others_background, :premorbid_personality, :family_constellation,

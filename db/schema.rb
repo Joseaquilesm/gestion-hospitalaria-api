@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_03_040609) do
+ActiveRecord::Schema.define(version: 2019_07_07_222044) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -302,6 +302,7 @@ ActiveRecord::Schema.define(version: 2019_07_03_040609) do
     t.integer "work_day_id"
     t.string "entry_time"
     t.string "departure_time"
+    t.string "password_digest"
     t.index ["person_id"], name: "index_users_on_person_id"
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["specialty_id"], name: "index_users_on_specialty_id"

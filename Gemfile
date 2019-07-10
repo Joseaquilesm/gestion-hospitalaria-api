@@ -62,3 +62,6 @@ gem 'rails-i18n'
 # Soft-Delete
 gem "paranoia", "~> 2.2"
 gem "active_admin_paranoia", '~> 1.0.11'
+
+# Windows
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?
