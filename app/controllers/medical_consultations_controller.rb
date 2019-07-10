@@ -1,11 +1,7 @@
 class MedicalConsultationsController < ApiController
   def index
-    if params[:patient_id].present?
-      @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: params[:patient_id]})
-      render status: 200, json: {medical_consultations: @medical_consultations}
-    else
-      render status: 200, json: {error: true, message: 'Se debe especificar un paciente.'}
-    end
+    @medical_consultations = MedicalConsultation.all
+    render status: 200, json: {medical_consultations: @medical_consultations}
   end
 
   def create
@@ -46,6 +42,16 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El doctor no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
+      render status: 200, json: {medical_consultations: @medical_consultations}
+    end
+  end
+
+  def get_by_patient
+    @patient = Patient.find_by_id(params[:id])
+    if @patient.nil?
+      render status: 200, json: {error: true, message: 'El paciente no existe.'}
+    else
+      @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: @patient.id})
       render status: 200, json: {medical_consultations: @medical_consultations}
     end
   end

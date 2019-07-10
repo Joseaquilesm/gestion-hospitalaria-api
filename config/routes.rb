@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :appointments
     resources :medical_consultations, only: [:index, :create, :show]
     get 'doctors/:id/medical_consultations', to: 'medical_consultations#get_by_doctor'
+    get 'patients/:id/medical_consultations', to: 'medical_consultations#get_by_patient'
   end
   root to: redirect('/admin')
 end
