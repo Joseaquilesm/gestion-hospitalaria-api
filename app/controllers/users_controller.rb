@@ -1,6 +1,6 @@
-# frozen_string_literal: true
-
 class UsersController < ApiController
+  # before_action :authorize_request, except: [:index, :create]
+
   def index
     users_filtered = User.all unless params[:role].present?
     users_filtered = User.where(role: Role.find_by_name(params[:role])) if params[:role].present?
@@ -50,9 +50,7 @@ class UsersController < ApiController
     @user = User.new(user_params.except(:role, :specialty))
     @work_day = WorkDay.new(work_day_params)
     @user.role = Role.find_by_name(params[:role])
-    if @user.role.name == 'doctor'
-      @user.specialty = Specialty.find_by_name(params[:specialty])
-    end
+    @user.specialty = Specialty.find_by_name(params[:specialty])
     begin
       ActiveRecord::Base.transaction do
         @person.save!
@@ -100,7 +98,7 @@ class UsersController < ApiController
   private
 
   def user_params
-    params.permit(:role, :specialty, :entry_time, :departure_time)
+    params.permit(:role, :specialty, :entry_time, :departure_time, :password, :password_confirmation)
   end
 
   def work_day_params

@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     resources :patients, except: [:destroy]
     # resources :clinic_histories, only: [:show, :update]
     resources :users, only: [:index, :create, :show, :update]
+
+    post '/login', to: 'authentication#login'
+
     get 'admins', to: 'users#get_admins'
     get 'doctors', to: 'users#get_doctors'
     get 'doctors/:id', to: 'users#get_doctor'

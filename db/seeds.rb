@@ -1,5 +1,5 @@
 Specialty.create(name: 'cardiologia') unless Specialty.find_by_name('cardiologia')
-Specialty.create(name: 'psiquiatria') unless Specialty.find_by_name('psiquiatra')
+Specialty.create(name: 'psiquiatria') unless Specialty.find_by_name('psiquiatria')
 Specialty.create(name: 'psicologia') unless Specialty.find_by_name('psicologia')
 Role.create(name: 'admin') unless Role.find_by_name('admin')
 Role.create(name: 'doctor') unless Role.find_by_name('doctor')

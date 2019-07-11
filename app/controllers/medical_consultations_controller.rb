@@ -32,7 +32,7 @@ class MedicalConsultationsController < ApiController
     if @medical_consultation.nil?
       render status: 200, json: {error: true, message: 'La consulta no existe!'}
     else
-      render status: 200, json: {medical_consultation: @medical_consultation}
+      render status: 200, json: {medical_consultation: @medical_consultation.as_json}
     end
   end
 
@@ -42,7 +42,7 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El doctor no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
-      render status: 200, json: {medical_consultations: @medical_consultations}
+      render status: 200, json: {medical_consultations: @medical_consultations.as_json}
     end
   end
 
@@ -52,7 +52,7 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: @patient.id})
-      render status: 200, json: {medical_consultations: @medical_consultations}
+      render status: 200, json: {medical_consultations: @medical_consultations.as_json}
     end
   end
 
@@ -68,7 +68,7 @@ class MedicalConsultationsController < ApiController
 
   def analytic_params
     params.permit(:hemograma, :glicemia, :urea, :creatinina, :alt, :ast, :ggt, :na,
-                  :k, :mg, :ca, :t4libre, :tsh, :albumina, :hbal, :amonio, :prolactina,
+                  :k, :mg, :ca, :t4libre, :tsh, :albumina, :hba1, :amonio, :prolactina,
                   :hiv, :hcv, :hbsag, :tac_craneo, :ekg, :eeg, :irm_encefalo,
                   :espectroscopia, :otros)
   end

@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_secure_password
+
   validates :role_id, presence: true
   validates :specialty_id, presence: true, :if => :doctor?
   validates :entry_time, presence: true
@@ -14,6 +16,8 @@ class User < ApplicationRecord
   # has_and_belongs_to_many :vacation
   # has_and_belongs_to_many :medic_license
   # has_and_belongs_to_many :permission
+
+  validates :password, length: {minimum: 6}, if: -> {new_record? || !password.nil?}
 
   def doctor?
     role.name == 'doctor' unless role.nil?

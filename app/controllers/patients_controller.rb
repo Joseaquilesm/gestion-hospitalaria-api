@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PatientsController < ApiController
   def index
     patients = Patient.all
@@ -8,7 +6,7 @@ class PatientsController < ApiController
       @p = fill_info(patient)
       @obj.push(@p)
     end
-    render status: 200, json: { patients: @obj }
+    render status: 200, json: {patients: @obj}
   end
 
   def create
@@ -20,26 +18,26 @@ class PatientsController < ApiController
         @patient.person = @person
         @patient.save!
       end
-      render status: 200, json: { message: 'Paciente creado exitosamente!' }
+      render status: 200, json: {message: 'Paciente creado exitosamente!'}
     rescue StandardError
       @messages = get_errors(@person, @patient)
-      render status: 200, json: { error: true, messages: @messages }
+      render status: 200, json: {error: true, messages: @messages}
     end
   end
 
   def show
     patient = Patient.find_by_id(params[:id])
-    render status: 200, json: { error: true, message: 'El paciente no existe' } if patient.nil?
+    render status: 200, json: {error: true, message: 'El paciente no existe'} if patient.nil?
     @obj = {}
     unless patient.nil?
       @obj = fill_info(patient)
-      render status: 200, json: { patient: @obj }
+      render status: 200, json: {patient: @obj}
     end
   end
 
   def update
     @patient = Patient.find_by_id(params[:id])
-    render status: 200, json: { error: true, message: 'El paciente no existe' } if @patient.nil?
+    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
     unless @patient.nil?
       @person = @patient.person
       begin
@@ -47,10 +45,10 @@ class PatientsController < ApiController
           @person.update!(person_params)
           @patient.update!(patient_params)
         end
-        render status: 200, json: { message: 'Paciente actualizado exitosamente!' }
+        render status: 200, json: {message: 'Paciente actualizado exitosamente!'}
       rescue StandardError
         @messages = get_errors(@patient, @person)
-        render status: 200, json: { error: true, messages: @messages }
+        render status: 200, json: {error: true, messages: @messages}
       end
     end
   end

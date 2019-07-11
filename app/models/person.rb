@@ -8,7 +8,7 @@ class Person < ApplicationRecord
   validates :last_name, presence: true
   validates :genre, inclusion: {in: %w[Masculino Femenino]}
   validates :birthday, presence: true
-  validates :email, uniqueness: {case_sensitive: false}, format: {with: VALID_EMAIL_REGEX}, if: -> {!email.blank?}
+  validates :email, presence: true, uniqueness: {case_sensitive: false}, format: {with: VALID_EMAIL_REGEX}
   # Falta el inclusion (verificar que manda React)
   validates :civil_status, presence: true
 

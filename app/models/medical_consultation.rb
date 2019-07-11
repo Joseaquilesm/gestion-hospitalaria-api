@@ -11,4 +11,9 @@ class MedicalConsultation < ApplicationRecord
   def display_name
     "Consulta ##{id}"
   end
+
+  def as_json(options = {})
+    super(include: [:specialty, :analytic, :appointment]).except('appointment_id', 'specialty_id', 'analytic_id').merge(
+        {specialty: specialty.name})
+  end
 end
