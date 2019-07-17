@@ -19,8 +19,20 @@ class User < ApplicationRecord
 
   validates :password, length: {minimum: 6}, if: -> {new_record? || !password.nil?}
 
+  def admin?
+    role.name == 'Administrador'
+  end
+
   def doctor?
-    role.name == 'Doctor' unless role.nil?
+    role.name == 'Doctor'
+  end
+
+  def nurse?
+    role.name == 'Enfermera'
+  end
+
+  def secretary?
+    role.name == 'Secretaria'
   end
 
   def display_name
@@ -32,9 +44,13 @@ class User < ApplicationRecord
   end
 
   def get_all_attrs
+    info = {}
+    info.merge!(id: id)
+    info.merge!(person.get_all_attrs)
+    info.merge!(get_attrs)
     if role.name == "Doctor"
-      person.get_all_attrs.merge(get_attrs, specialty: specialty.name, role: role.name, work_day: work_day.attributes)
-    elsif role.name == "Enfermera" or role.name == "Secretaria"
+      info.merge!(specialty: specialty.name, role: role.name)
     end
+    info.merge!(work_day.attributes)
   end
 end

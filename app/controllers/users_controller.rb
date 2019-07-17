@@ -1,5 +1,6 @@
 class UsersController < ApiController
-  # before_action :authorize_request, except: [:create]
+  before_action :authorize_request
+  before_action :verify_admin_users
 
   def index
     @users = User.all

@@ -1,4 +1,5 @@
 class ApiController < ActionController::API
+
   protected
 
   def not_found
@@ -41,5 +42,37 @@ class ApiController < ActionController::API
   def person_params
     params.permit(:identification, :name, :last_name, :address, :phone_number, :genre, :birthday,
                   :birth_place, :nationality, :email, :civil_status)
+  end
+
+  # Restrictions
+  def verify_admin_users
+    if @current_user.admin?
+      return render status: 200, json: {error: true, message: 'Debes ser administrador para realizar esta función', isTokenValid: is_token_valid?}
+    end
+  end
+
+  def verify_users_patients
+    case action_name
+    when 'create'
+      if @current_user.doctor?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador, secretaria o enfermera para realizar esta función', isTokenValid: is_token_valid?}
+      end
+    when 'update'
+      if @current_user.doctor? or @current_user.nurse?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador o secretaria para realizar esta función', isTokenValid: is_token_valid?}
+      end
+    end
+  end
+
+  def verify_users_appointments
+    if @current_user.doctor? or @current_user.nurse?
+      return render status: 200, json: {error: true, message: 'Debes ser administrador o secretaria para realizar esta función', isTokenValid: is_token_valid?}
+    end
+  end
+
+  def verify_users_consultations
+    unless @current_user.doctor?
+      return render status: 200, json: {error: true, message: 'Debes ser doctor para realizar esta función', isTokenValid: is_token_valid?}
+    end
   end
 end

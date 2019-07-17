@@ -1,4 +1,8 @@
 class MedicalConsultationsController < ApiController
+
+  before_action :authorize_request
+  before_action :verify_users_consultations
+
   def index
     @medical_consultations = MedicalConsultation.all
     render status: 200, json: {medical_consultations: @medical_consultations}

@@ -1,5 +1,8 @@
 class AppointmentsController < ApiController
 
+  before_action :authorize_request
+  before_action :verify_users_appointments
+
   def index
     @obj = []
     appointments = Appointment.all
@@ -45,18 +48,18 @@ class AppointmentsController < ApiController
     end
   end
 
-  def delete
-    @appointment = Appointment.find_by_id(params[:id])
-    if @appointment.nil?
-      render json: {error: "La cita no existe"}
-    else
-      if @appointment.destroy
-        render json: {message: "La cita se ha eliminado exitosamente"}
-      else
-        render json: {error: true, messages: @appointment.errors}
-      end
-    end
-  end
+  # def delete
+  #   @appointment = Appointment.find_by_id(params[:id])
+  #   if @appointment.nil?
+  #     render json: {error: "La cita no existe"}
+  #   else
+  #     if @appointment.destroy
+  #       render json: {message: "La cita se ha eliminado exitosamente"}
+  #     else
+  #       render json: {error: true, messages: @appointment.errors}
+  #     end
+  #   end
+  # end
 
   def get_today_appointments
     @doctor = User.find_by_id(params[:id])
@@ -64,7 +67,7 @@ class AppointmentsController < ApiController
       render status: 200, json: {error: true, message: 'El doctor no existe.'}
     else
       @obj = []
-      @appointments = Appointment.where( doctor_id: @doctor.id, appointment_date: Date.current)
+      @appointments = Appointment.where(doctor_id: @doctor.id, appointment_date: Date.current)
       @appointments.each do |appointment|
         @obj.push(get_appointment(appointment))
       end

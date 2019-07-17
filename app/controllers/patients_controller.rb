@@ -1,4 +1,7 @@
 class PatientsController < ApiController
+  before_action :authorize_request
+  before_action :verify_users_patients
+
   def index
     patients = Patient.all
     @obj = []
