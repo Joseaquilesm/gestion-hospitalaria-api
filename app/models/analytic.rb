@@ -5,4 +5,8 @@ class Analytic < ApplicationRecord
   def display_name
     "Análisis ##{id}"
   end
+
+  def get_all_attrs
+    attributes
+  end
 end

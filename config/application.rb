@@ -48,6 +48,7 @@ module GestionHospitalaria
     end
 
     # Localization
+    config.time_zone = 'Georgetown'
     config.i18n.default_locale = :es
   end
 end

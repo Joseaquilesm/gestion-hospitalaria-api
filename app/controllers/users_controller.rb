@@ -1,97 +1,111 @@
 class UsersController < ApiController
-  # before_action :authorize_request, except: [:index, :create]
+  # before_action :authorize_request, except: [:create]
 
   def index
-    users_filtered = User.all unless params[:role].present?
-    users_filtered = User.where(role: Role.find_by_name(params[:role])) if params[:role].present?
-    @obj = []
-    users_filtered.each do |user|
-      @attrs = get_info(user)
-      @obj.push(@attrs)
-    end
-    render json: {admins: @obj} if params[:role] == 'admin'
-    render json: {doctors: @obj} if params[:role] == 'doctor'
-    render json: {nurses: @obj} if params[:role] == 'enfermera'
-    render json: {secretaries: @obj} if params[:role] == 'secretaria'
-    render json: {employees: @obj} unless params[:role].present?
+    @users = User.all
+    @obj = fill_info(@users)
+    render status: 200, json: {users: @obj, isTokenValid: is_token_valid?}
   end
 
   def get_admins
-    @admins = User.where(role: Role.find_by_name('admin'))
-    @obj = get_all_info(@admins)
-    render status: 200, json: {admins: @obj}
+    @admins = User.where(role: Role.find_by_name('Administrador'))
+    @obj = fill_info(@admins)
+    render status: 200, json: {admins: @obj, isTokenValid: is_token_valid?}
+  end
+
+  def get_admin
+    @admin = User.find_by_id(params[:id])
+    return user_not_found if @admin.nil?
+    render status: 200, json: {admin: @admin.get_all_attrs, isTokenValid: is_token_valid?}
   end
 
   def get_doctors
-    @doctors = User.where(role: Role.find_by_name('doctor'))
-    @obj = get_all_info(@doctors)
-    render status: 200, json: {doctors: @obj}
+    @doctors = User.where(role: Role.find_by_name('Doctor'))
+    @obj = fill_info(@doctors)
+    render status: 200, json: {doctors: @obj, isTokenValid: is_token_valid?}
   end
 
   def get_doctor
     @doctor = User.find_by_id(params[:id])
-    render status: 200, json: {doctor: @doctor}
+    return user_not_found if @doctor.nil?
+    render status: 200, json: {doctor: @doctor.get_all_attrs, isTokenValid: is_token_valid?}
   end
 
   def get_nurses
-    @nurses = User.where(role: Role.find_by_name('enfermera'))
-    @obj = get_all_info(@nurses)
-    render status: 200, json: {nurses: @obj}
+    @nurses = User.where(role: Role.find_by_name('Enfermera'))
+    @obj = fill_info(@nurses)
+    render status: 200, json: {nurses: @obj, isTokenValid: is_token_valid?}
+  end
+
+  def get_nurse
+    @nurse = User.find_by_id(params[:id])
+    return user_not_found if @nurse.nil?
+    render status: 200, json: {nurse: @nurse.get_all_attrs, isTokenValid: is_token_valid?}
   end
 
   def get_secretaries
-    @secretaries = User.where(role: Role.find_by_name('secretaria'))
-    @obj = get_all_info(@secretaries)
-    render status: 200, json: {secretaries: @obj}
+    @secretaries = User.where(role: Role.find_by_name('Secretaria'))
+    @obj = fill_info(@secretaries)
+    render status: 200, json: {secretaries: @obj, isTokenValid: is_token_valid?}
+  end
+
+  def get_secretary
+    @secretary = User.find_by_id(params[:id])
+    return user_not_found if @secretary.nil?
+    render status: 200, json: {secretary: @secretary.get_all_attrs, isTokenValid: is_token_valid?}
   end
 
   def create
-    @person = Person.new(person_params)
-    @user = User.new(user_params.except(:role, :specialty))
-    @work_day = WorkDay.new(work_day_params)
-    @user.role = Role.find_by_name(params[:role])
-    @user.specialty = Specialty.find_by_name(params[:specialty])
-    begin
-      ActiveRecord::Base.transaction do
-        @person.save!
-        @work_day.save!
-        @user.person = @person
-        @user.work_day = @work_day
-        @user.save!
+    if params[:password] == params[:password_confirmation]
+      @person = Person.new(person_params)
+      @user = User.new(user_params.except(:role, :specialty))
+      @work_day = WorkDay.new(work_day_params)
+      @user.role = Role.find_by_name(params[:role])
+      @user.specialty = Specialty.find_by_name(params[:specialty])
+      begin
+        ActiveRecord::Base.transaction do
+          raise ActiveRecord::Rollback if @person.email.blank? || @person.email.nil?
+          @person.save!
+          @work_day.save!
+          @user.person = @person
+          @user.work_day = @work_day
+          @user.save!
+        end
+        raise StandardError if @person.email.blank? || @person.email.nil?
+        render status: 200, json: {message: 'Usuario creado exitosamente!'}
+      rescue StandardError
+        @messages = get_errors(@person, @user, @work_day)
+        @messages.merge!(email: 'Se necesita un email') if @person.email.blank? || @person.email.nil?
+        render status: 200, json: {error: true, messages: @messages}
       end
-      render status: 200, json: {message: 'Usuario creado exitosamente!'}
-    rescue StandardError
-      @messages = get_errors(@person, @user, @work_day)
-      render status: 200, json: {error: true, messages: @messages}
+    else
+      render status: 200, json: {error: true, message: 'La contraseña y su confirmación no son iguales.'}
     end
   end
 
   def show
-    user = User.find_by_id(params[:id])
-    render status: 200, json: {error: true, message: 'El usuario no existe'} if user.nil?
-    unless user.nil?
-      @obj = get_info(user)
-      render status: 200, json: {user: @obj}
-    end
+    @user = User.find_by_id(params[:id])
+    return user_not_found if @user.nil?
+    render status: 200, json: {user: @user.get_all_attrs, isTokenValid: is_token_valid?}
   end
 
   def update
     @user = User.find_by_id(params[:id])
-    render json: {error: true, message: 'El usuario no existe'} if @user.nil?
-    unless @user.nil?
-      @person = @user.person
-      @work_day = @user.work_day unless @user.work_day.nil?
-      begin
-        ActiveRecord::Base.transaction do
-          @person.update!(person_params)
-          @user.update!(user_params)
-          @work_day.update!(work_day_params)
-        end
-        render status: 200, json: {message: 'Usuario actualizado exitosamente!'}
-      rescue StandardError
-        @messages = get_errors(@person, @user, @work_day)
-        render status: 200, json: {error: true, messages: @messages}
+    return render status: 200, json: {error: true, message: 'El usuario no existe', isTokenValid: is_token_valid?} if @user.nil?
+    begin
+      @role = Role.find_by_name(params[:role])
+      @specialty = Specialty.find_by_name(params[:specialty])
+      ActiveRecord::Base.transaction do
+        @user.person.update!(person_params)
+        @user.work_day.update!(work_day_params) unless @user.work_day.nil?
+        @user.role = @role if params[:role].present?
+        @user.specialty = @specialty if params[:specialty].present?
+        @user.update!(user_params.except('role', 'specialty'))
       end
+      render status: 200, json: {message: 'Usuario actualizado exitosamente!'}
+    rescue StandardError
+      @messages = get_errors(@user.person, @user, @user.work_day)
+      render status: 200, json: {error: true, messages: @messages, isTokenValid: is_token_valid?}
     end
   end
 
@@ -106,6 +120,10 @@ class UsersController < ApiController
                   :saturday, :sunday)
   end
 
+  def user_not_found
+    render status: 200, json: {error: true, message: 'Usuario no encontrado', isTokenValid: is_token_valid?}
+  end
+
   def get_errors(person, user, work_day)
     messages = {}
     fill_errors(person.errors, messages)
@@ -114,22 +132,11 @@ class UsersController < ApiController
     messages
   end
 
-  def get_all_info(users)
+  def fill_info(users)
     obj = []
     users.each do |user|
-      obj.push(get_info(user))
+      obj.push(user.get_all_attrs)
     end
-    obj
-  end
-
-  def get_info(user)
-    obj = {}
-    obj.merge!(id: user.id)
-    obj.merge!(user.person.attributes.except('id'))
-    obj.merge!(user.attributes.except('id', 'person_id', 'specialty_id', 'role_id'))
-    obj.merge!(role: user.role.name)
-    obj.merge!(specialty: user.specialty.name) if user.role.name == 'doctor'
-    obj.merge!(user.work_day.attributes.except('id')) unless user.work_day.nil?
     obj
   end
 end

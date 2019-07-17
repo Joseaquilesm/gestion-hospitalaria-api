@@ -20,10 +20,21 @@ class User < ApplicationRecord
   validates :password, length: {minimum: 6}, if: -> {new_record? || !password.nil?}
 
   def doctor?
-    role.name == 'doctor' unless role.nil?
+    role.name == 'Doctor' unless role.nil?
   end
 
   def display_name
     person.identification + ' - ' + person.name + ' ' + person.last_name
+  end
+
+  def get_attrs
+    attributes.except(:person_id.to_s, :role_id.to_s, :specialty_id.to_s, :work_day_id.to_s, :password_digest.to_s)
+  end
+
+  def get_all_attrs
+    if role.name == "Doctor"
+      person.get_all_attrs.merge(get_attrs, specialty: specialty.name, role: role.name, work_day: work_day.attributes)
+    elsif role.name == "Enfermera" or role.name == "Secretaria"
+    end
   end
 end

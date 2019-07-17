@@ -58,6 +58,20 @@ class AppointmentsController < ApiController
     end
   end
 
+  def get_today_appointments
+    @doctor = User.find_by_id(params[:id])
+    if @doctor.nil? or @doctor.role_id != 2
+      render status: 200, json: {error: true, message: 'El doctor no existe.'}
+    else
+      @obj = []
+      @appointments = Appointment.where( doctor_id: @doctor.id, appointment_date: Date.current)
+      @appointments.each do |appointment|
+        @obj.push(get_appointment(appointment))
+      end
+      render status: 200, json: {appointments: @obj}
+    end
+  end
+
   private
 
   def appointment_params
@@ -76,6 +90,13 @@ class AppointmentsController < ApiController
     obj.merge!(patient_identificacion: patient.person.identification)
     obj.merge!(patient_name: patient.person.name)
     obj.merge!(patient_last_name: patient.person.last_name)
+    obj.merge!(patient_birthday: patient.person.birthday)
+    obj.merge!(patient_occupation: patient.occupation)
+    obj.merge!(patient_civil_status: patient.person.civil_status)
+    obj.merge!(patient_phone_number: patient.person.phone_number)
+    obj.merge!(patient_address: patient.person.address)
+    obj.merge!(patient_email: patient.person.email)
     obj
   end
 end
+

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_07_222044) do
+ActiveRecord::Schema.define(version: 2019_07_14_205149) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 2019_07_07_222044) do
     t.boolean "eeg"
     t.boolean "irm_encefalo"
     t.boolean "espectroscopia"
-    t.text "otros"
+    t.text "others"
   end
 
   create_table "appointments", force: :cascade do |t|
@@ -77,17 +77,16 @@ ActiveRecord::Schema.define(version: 2019_07_07_222044) do
     t.string "familiar_name"
     t.string "familiar_relation"
     t.string "familiar_phone_number"
+    t.string "referrer"
     t.integer "doctor_id"
     t.integer "secretary_id"
     t.integer "patient_id"
-    t.integer "specialty_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["doctor_id"], name: "index_appointments_on_doctor_id"
     t.index ["patient_id"], name: "index_appointments_on_patient_id"
     t.index ["secretary_id"], name: "index_appointments_on_secretary_id"
-    t.index ["specialty_id"], name: "index_appointments_on_specialty_id"
   end
 
   create_table "centers", force: :cascade do |t|
@@ -119,15 +118,6 @@ ActiveRecord::Schema.define(version: 2019_07_07_222044) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["medical_consultation_id"], name: "index_consultation_bills_on_medical_consultation_id"
-  end
-
-  create_table "doses", force: :cascade do |t|
-    t.integer "medicine_id"
-    t.string "frequency"
-    t.integer "days"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["medicine_id"], name: "index_doses_on_medicine_id"
   end
 
   create_table "medic_licenses", force: :cascade do |t|
@@ -162,6 +152,7 @@ ActiveRecord::Schema.define(version: 2019_07_07_222044) do
     t.text "father_background"
     t.text "siblings_background"
     t.text "spouse_background"
+    t.text "others_family_background"
     t.text "others_background"
     t.text "premorbid_personality"
     t.text "family_constellation"
@@ -196,15 +187,6 @@ ActiveRecord::Schema.define(version: 2019_07_07_222044) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["center_id"], name: "index_medicines_on_center_id"
-  end
-
-  create_table "order_doses", force: :cascade do |t|
-    t.integer "medical_order_id"
-    t.integer "dose_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["dose_id"], name: "index_order_doses_on_dose_id"
-    t.index ["medical_order_id"], name: "index_order_doses_on_medical_order_id"
   end
 
   create_table "patient_controls", force: :cascade do |t|

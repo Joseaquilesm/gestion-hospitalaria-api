@@ -6,6 +6,7 @@ class MedicalConsultationsController < ApiController
 
   def create
     @analytic = Analytic.new(analytic_params)
+    @patient_control = PatientControl.new(patient_control_params)
     @medical_consultation = MedicalConsultation.new(medical_consultation_params)
     @consultation_bill = ConsultationBill.new(price: 0.0);
     begin
@@ -13,9 +14,11 @@ class MedicalConsultationsController < ApiController
         @analytic.save!
         @consultation_bill.save!
         @medical_consultation.analytic = @analytic
+        @medical_consultation.patient_control = @patient_control
         @medical_consultation.save!
         @consultation_bill.medical_consultation = @medical_consultation
         @consultation_bill.save!
+        @medical_consultation.appointment.destroy # Se archiva la cita
       end
       render status: 200, json: {message: 'La consulta se ha registrado exitosamente!'}
     rescue StandardError
@@ -52,7 +55,11 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: @patient.id})
-      render status: 200, json: {medical_consultations: @medical_consultations.as_json}
+      @obj = []
+      @medical_consultations.each do |mc|
+        @obj.push(mc.get_all_attrs)
+      end
+      render status: 200, json: {medical_consultations: @obj}
     end
   end
 
@@ -70,6 +77,10 @@ class MedicalConsultationsController < ApiController
     params.permit(:hemograma, :glicemia, :urea, :creatinina, :alt, :ast, :ggt, :na,
                   :k, :mg, :ca, :t4libre, :tsh, :albumina, :hba1, :amonio, :prolactina,
                   :hiv, :hcv, :hbsag, :tac_craneo, :ekg, :eeg, :irm_encefalo,
-                  :espectroscopia, :otros)
+                  :espectroscopia, :others)
+  end
+
+  def patient_control_params
+    params.permit(:heart_rate, :blood_pressure, :weight, :observation)
   end
 end

@@ -23,6 +23,7 @@ class CreateMedicalConsultations < ActiveRecord::Migration[5.2]
       t.text :father_background
       t.text :siblings_background
       t.text :spouse_background
+      t.text :others_family_background
       t.text :others_background
       t.text :premorbid_personality
       t.text :family_constellation

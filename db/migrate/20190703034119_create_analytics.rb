@@ -26,7 +26,7 @@ class CreateAnalytics < ActiveRecord::Migration[5.2]
       t.boolean :eeg
       t.boolean :irm_encefalo
       t.boolean :espectroscopia
-      t.text :otros
+      t.text :others
     end
   end
 end

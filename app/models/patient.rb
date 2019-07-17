@@ -20,4 +20,12 @@ class Patient < ApplicationRecord
   def display_name
     person.identification + ' - ' + person.name + ' ' + person.last_name
   end
+
+  def get_attrs
+    attributes.except(:person_id.to_s)
+  end
+
+  def get_all_attrs
+    person.get_all_attrs.merge(get_attrs)
+  end
 end

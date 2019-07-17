@@ -13,9 +13,23 @@ class ApiController < ActionController::API
       @current_user = User.find(@decoded[:user_id])
     rescue ActiveRecord::RecordNotFound => e
       render status: 200, json: {errors: true, message: e.message}
-    rescue JWT::DecodeError => e
-      render status: 200, json: {errors: e.message}
+    rescue JWT::DecodeError
+      render status: 200, json: {errors: {isTokenValid: false}}
     end
+  end
+
+  def is_token_valid?
+    header = request.headers['Authorization']
+    header = header.split(' ').last if header
+    begin
+      @decoded = JsonWebToken.decode(header)
+      @current_user = User.find(@decoded[:user_id])
+    rescue ActiveRecord::RecordNotFound
+      return false
+    rescue JWT::DecodeError
+      return false
+    end
+    return true
   end
 
   def fill_errors(obj, hash)

@@ -8,12 +8,19 @@ class MedicalConsultation < ApplicationRecord
 
   has_one :consultation_bill, dependent: :destroy
 
+  def appointment
+    Appointment.unscoped {super}
+  end
+
   def display_name
     "Consulta ##{id}"
   end
 
-  def as_json(options = {})
-    super(include: [:specialty, :analytic, :appointment]).except('appointment_id', 'specialty_id', 'analytic_id').merge(
-        {specialty: specialty.name})
+  def get_attrs
+    attributes.except(:appointment_id.to_s, :medical_order_id.to_s, :patient_control_id.to_s, :specialty_id.to_s, :analytic_id.to_s)
+  end
+
+  def get_all_attrs
+    get_attrs.merge(appointment: appointment.get_all_attrs, specialty: specialty.name, analytic: analytic.get_all_attrs)
   end
 end
