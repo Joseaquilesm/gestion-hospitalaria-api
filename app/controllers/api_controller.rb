@@ -46,7 +46,7 @@ class ApiController < ActionController::API
 
   # Restrictions
   def verify_admin_users
-    if @current_user.admin?
+    unless @current_user.admin?
       return render status: 200, json: {error: true, message: 'Debes ser administrador para realizar esta función', isTokenValid: is_token_valid?}
     end
   end
