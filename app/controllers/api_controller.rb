@@ -46,8 +46,15 @@ class ApiController < ActionController::API
 
   # Restrictions
   def verify_admin_users
-    unless @current_user.admin?
-      return render status: 200, json: {error: true, message: 'Debes ser administrador para realizar esta función', isTokenValid: is_token_valid?}
+    case action_name
+    when 'get_doctors' or 'get_doctor'
+      unless @current_user.admin? or @current_user.secretary?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador o secretaria para realizar esta función', isTokenValid: is_token_valid?}
+      end
+    else
+      unless @current_user.admin?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador para realizar esta función', isTokenValid: is_token_valid?}
+      end
     end
   end
 
