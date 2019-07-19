@@ -48,8 +48,9 @@ class User < ApplicationRecord
     info.merge!(id: id)
     info.merge!(person.get_all_attrs)
     info.merge!(get_attrs)
+    info.merge!(role: role.name)
     if role.name == "Doctor"
-      info.merge!(specialty: specialty.name, role: role.name)
+      info.merge!(specialty: specialty.name)
     end
     info.merge!(work_day.attributes)
   end

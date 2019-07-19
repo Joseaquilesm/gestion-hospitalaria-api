@@ -5,7 +5,8 @@ class MedicalConsultationsController < ApiController
 
   def index
     @medical_consultations = MedicalConsultation.all
-    render status: 200, json: {medical_consultations: @medical_consultations}
+    @obj = fill_info(@medical_consultations)
+    render status: 200, json: {medical_consultations: @obj}
   end
 
   def create
@@ -37,9 +38,9 @@ class MedicalConsultationsController < ApiController
   def show
     @medical_consultation = MedicalConsultation.find_by_id(params[:id])
     if @medical_consultation.nil?
-      render status: 200, json: {error: true, message: 'La consulta no existe!'}
+      render status: 200, json: {error: true, message: 'La consulta no existe.'}
     else
-      render status: 200, json: {medical_consultation: @medical_consultation.as_json}
+      render status: 200, json: {medical_consultation: @medical_consultation.get_all_attrs}
     end
   end
 
@@ -49,7 +50,8 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El doctor no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
-      render status: 200, json: {medical_consultations: @medical_consultations.as_json}
+      @obj = fill_info(@medical_consultations)
+      render status: 200, json: {medical_consultations: @obj}
     end
   end
 
@@ -59,10 +61,7 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
       @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: @patient.id})
-      @obj = []
-      @medical_consultations.each do |mc|
-        @obj.push(mc.get_all_attrs)
-      end
+      @obj = fill_info(@medical_consultations)
       render status: 200, json: {medical_consultations: @obj}
     end
   end
@@ -86,5 +85,13 @@ class MedicalConsultationsController < ApiController
 
   def patient_control_params
     params.permit(:heart_rate, :blood_pressure, :weight, :observation)
+  end
+
+  def fill_info(consultations)
+    obj = []
+    consultations.each do |consultation|
+      obj.push(consultation.get_all_attrs)
+    end
+    obj
   end
 end
