@@ -5,11 +5,12 @@ class AppointmentsController < ApiController
 
   def index
     @obj = []
-    appointments = Appointment.all
-    appointments.each do |appointment|
+    @appointments = Appointment.all
+    @appointments.order(created_at: :desc)
+    @appointments.each do |appointment|
       @obj.push(get_appointment(appointment))
     end
-    render json: {appointments: @obj}
+    render status: 200, json: {appointments: @obj, isTokenValid: is_token_valid?}
   end
 
   def create
@@ -18,60 +19,48 @@ class AppointmentsController < ApiController
       ActiveRecord::Base.transaction do
         @appointment.save!
       end
-      render status: 200, json: {message: 'Cita creada exitosamente!'}
+      render status: 200, json: {message: 'Cita creada exitosamente!', isTokenValid: is_token_valid?}
     rescue
-      render status: 200, json: {error: true, messages: @appointment.errors}
+      render status: 200, json: {error: true, messages: @appointment.errors, isTokenValid: is_token_valid?}
     end
   end
 
   def update
     @appointment = Appointment.find_by_id(params[:id])
-    render json: {error: true, message: 'La cita no existe'} if @appointment.nil?
+    render json: {error: true, message: 'La cita no existe', isTokenValid: is_token_valid?} if @appointment.nil?
     unless @appointment.nil?
       begin
         ActiveRecord::Base.transaction do
           @appointment.update!(appointment_params)
         end
-        render status: 200, json: {message: 'Cita actualizada exitosamente!'}
+        render status: 200, json: {message: 'Cita actualizada exitosamente!', isTokenValid: is_token_valid?}
       rescue
-        render status: 200, json: {error: true, messages: @appointment.errors}
+        render status: 200, json: {error: true, messages: @appointment.errors, isTokenValid: is_token_valid?}
       end
     end
   end
 
   def show
     @appointment = Appointment.find_by_id(params[:id])
-    render json: {error: true, message: 'La cita no existe'} if @appointment.nil?
+    render status: 200, json: {error: true, message: 'La cita no existe', isTokenValid: is_token_valid?} if @appointment.nil?
     unless @appointment.nil?
       @obj = get_appointment(@appointment)
-      render json: {appointment: @obj}
+      render status: 200, json: {appointment: @obj, isTokenValid: is_token_valid?}
     end
   end
-
-  # def delete
-  #   @appointment = Appointment.find_by_id(params[:id])
-  #   if @appointment.nil?
-  #     render json: {error: "La cita no existe"}
-  #   else
-  #     if @appointment.destroy
-  #       render json: {message: "La cita se ha eliminado exitosamente"}
-  #     else
-  #       render json: {error: true, messages: @appointment.errors}
-  #     end
-  #   end
-  # end
 
   def get_today_appointments
     @doctor = User.find_by_id(params[:id])
     if @doctor.nil? or @doctor.role_id != 2
-      render status: 200, json: {error: true, message: 'El doctor no existe.'}
+      render status: 200, json: {error: true, message: 'El doctor no existe.', isTokenValid: is_token_valid?}
     else
       @obj = []
       @appointments = Appointment.where(doctor_id: @doctor.id, appointment_date: Date.current)
+      @appointments.order(created_at: :desc)
       @appointments.each do |appointment|
         @obj.push(get_appointment(appointment))
       end
-      render status: 200, json: {appointments: @obj}
+      render status: 200, json: {appointments: @obj, isTokenValid: is_token_valid?}
     end
   end
 
