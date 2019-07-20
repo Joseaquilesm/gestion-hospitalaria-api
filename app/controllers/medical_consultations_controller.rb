@@ -101,7 +101,7 @@ class MedicalConsultationsController < ApiController
 
     all_a.each do |a|
       mc = MedicalConsultation.find_by_appointment_id(a.id)
-      filtered.push(mc)
+      filtered.push(mc.get_all_attrs)
     end
   end
 end
