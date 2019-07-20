@@ -17,6 +17,7 @@ class MedicalConsultationsController < ApiController
     begin
       ActiveRecord::Base.transaction do
         @analytic.save!
+        @patient_control.save!
         @consultation_bill.save!
         @medical_consultation.analytic = @analytic
         @medical_consultation.patient_control = @patient_control
