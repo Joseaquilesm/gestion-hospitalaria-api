@@ -71,8 +71,14 @@ class ApiController < ActionController::API
   end
 
   def verify_users_appointments
-    if @current_user.doctor? or @current_user.nurse?
-      return render status: 200, json: {error: true, message: 'Debes ser administrador o secretaria para realizar esta función', isTokenValid: is_token_valid?}
+    if action_name == 'get_today_appointments'
+      if @current_user.nurse?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador, secretaria o doctor para realizar esta función', isTokenValid: is_token_valid?}
+      end
+    else
+      unless @current_user.secretary? or @current_user.admin?
+        return render status: 200, json: {error: true, message: 'Debes ser administrador o secretaria para realizar esta función', isTokenValid: is_token_valid?}
+      end
     end
   end
 
@@ -81,4 +87,5 @@ class ApiController < ActionController::API
       return render status: 200, json: {error: true, message: 'Debes ser doctor para realizar esta función', isTokenValid: is_token_valid?}
     end
   end
+
 end
