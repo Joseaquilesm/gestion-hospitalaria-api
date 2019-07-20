@@ -49,7 +49,7 @@ class MedicalConsultationsController < ApiController
     if @doctor.nil?
       render status: 200, json: {error: true, message: 'El doctor no existe.'}
     else
-      @medical_consultations = MedicalConsultation.with_deleted.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
+      @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {doctor_id: @doctor.id})
       @obj = fill_info(@medical_consultations)
       render status: 200, json: {medical_consultations: @obj}
     end
@@ -60,7 +60,7 @@ class MedicalConsultationsController < ApiController
     if @patient.nil?
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
-      @medical_consultations = MedicalConsultation.with_deleted.joins(:appointment).where(appointments: {patient_id: @patient.id})
+      @medical_consultations = get_all_by_patient(@patient.id)
       @obj = fill_info(@medical_consultations)
       render status: 200, json: {medical_consultations: @obj}
     end
@@ -93,5 +93,15 @@ class MedicalConsultationsController < ApiController
       obj.push(consultation.get_all_attrs)
     end
     obj
+  end
+
+  def get_all_by_patient(id)
+    all_a = Appointment.with_deleted.where(patient_id: id)
+    filtered = []
+
+    all_a.each do |a|
+      mc = MedicalConsultation.find_by_appointment_id(a.id)
+      filtered.push(mc)
+    end
   end
 end
