@@ -21,6 +21,8 @@ class MedicalConsultation < ApplicationRecord
   end
 
   def get_all_attrs
-    get_attrs.merge(appointment: appointment.get_all_attrs, specialty: specialty.name, analytic: analytic.get_all_attrs)
+    info = get_attrs.merge(appointment: appointment.get_all_attrs, specialty: specialty.name, analytic: analytic.get_all_attrs)
+    info.merge!(patient_control: patient_control.attributes) unless patient_control.nil?
+    return info
   end
 end
