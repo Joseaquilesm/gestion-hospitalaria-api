@@ -102,5 +102,7 @@ class MedicalConsultationsController < ApiController
       mc = MedicalConsultation.find_by_appointment_id(a.id)
       filtered.push(mc.get_all_attrs)
     end
+
+    return filtered
   end
 end
