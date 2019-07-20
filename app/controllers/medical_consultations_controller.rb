@@ -61,8 +61,7 @@ class MedicalConsultationsController < ApiController
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
       @medical_consultations = get_all_by_patient(@patient.id)
-      @obj = fill_info(@medical_consultations)
-      render status: 200, json: {medical_consultations: @obj}
+      render status: 200, json: {medical_consultations: @medical_consultations}
     end
   end
 
