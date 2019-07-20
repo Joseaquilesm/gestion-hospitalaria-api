@@ -60,7 +60,7 @@ class MedicalConsultationsController < ApiController
     if @patient.nil?
       render status: 200, json: {error: true, message: 'El paciente no existe.'}
     else
-      @medical_consultations = MedicalConsultation.joins(:appointment).where(appointments: {patient_id: @patient.id})
+      @medical_consultations = MedicalConsultation.joins(:appointment).where('appointments.patient_id = ? appointments.deleted_at != ?', params[:id], nil);
       @obj = fill_info(@medical_consultations)
       render status: 200, json: {medical_consultations: @obj}
     end
