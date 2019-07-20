@@ -2,7 +2,7 @@ class MedicalConsultation < ApplicationRecord
 
   belongs_to :appointment
   belongs_to :medical_order, optional: true
-  belongs_to :patient_control, optional: true
+  belongs_to :patient_control
   belongs_to :specialty
   belongs_to :analytic
 
@@ -21,6 +21,6 @@ class MedicalConsultation < ApplicationRecord
   end
 
   def get_all_attrs
-    get_attrs.merge(appointment: appointment.get_all_attrs, specialty: specialty.name, analytic: analytic.get_all_attrs, patient_control: patient_control.attributes)
+    get_attrs.merge(appointment: appointment.get_all_attrs, specialty: specialty.name, analytic: analytic.get_all_attrs)
   end
 end
