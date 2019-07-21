@@ -2,8 +2,8 @@ class AuthenticationController < ApiController
   before_action :authorize_request, except: :login
 
   def login
-    unless params[:email].present? and params[:password].present?
-      render status: 200, json: {error: true, message: 'Datos incorrectos'}
+    if params[:email].empty? or params[:password].empty?
+      return render status: 200, json: {error: true, message: 'Datos incorrectos'}
     end
 
     @user = User.joins(:person).where(people: {email: params[:email]}).first
