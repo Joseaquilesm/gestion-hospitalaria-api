@@ -24,7 +24,7 @@ class MedicalConsultationsController < ApiController
         @medical_consultation.specialty = @specialty
         @medical_consultation.appointment = @appointment
         @medical_consultation.analytic = @analytic
-        @medical_consultation.patient_control = @patient_control
+        @medical_consultation.patient_control = @patient_control unless @patient_control.nil?
         @medical_consultation.save!
         @consultation_bill.medical_consultation = @medical_consultation
         @consultation_bill.save!
@@ -34,7 +34,7 @@ class MedicalConsultationsController < ApiController
     rescue StandardError
       @obj = {}
       fill_errors(@analytic.errors, @obj)
-      fill_errors(@patient_control.errors, @obj)
+      fill_errors(@patient_control.errors, @obj) unless @patient_control.nil?
       fill_errors(@medical_consultation.errors, @obj)
       fill_errors(@consultation_bill.errors, @obj)
       render status: 200, json: {error: true, messages: @obj}
