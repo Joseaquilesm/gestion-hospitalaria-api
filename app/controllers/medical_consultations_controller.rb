@@ -19,12 +19,12 @@ class MedicalConsultationsController < ApiController
     begin
       ActiveRecord::Base.transaction do
         @analytic.save!
-        @patient_control.save! unless @patient_control.nil?
+        @patient_control.save!
         @consultation_bill.save!
         @medical_consultation.specialty = @specialty
         @medical_consultation.appointment = @appointment
         @medical_consultation.analytic = @analytic
-        @medical_consultation.patient_control = @patient_control unless @patient_control.nil?
+        @medical_consultation.patient_control = @patient_control
         @medical_consultation.save!
         @consultation_bill.medical_consultation = @medical_consultation
         @consultation_bill.save!
