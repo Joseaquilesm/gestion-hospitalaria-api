@@ -6,4 +6,8 @@ class PatientControl < ApplicationRecord
   def display_name
     "Control ##{id}"
   end
+
+  def get_all_attrs
+    attributes
+  end
 end

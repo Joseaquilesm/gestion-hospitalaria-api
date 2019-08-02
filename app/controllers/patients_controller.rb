@@ -56,6 +56,15 @@ class PatientsController < ApiController
     end
   end
 
+  def get_patient_controls
+    @patient = Patient.find_by_id(params[:id])
+    render status: 200, json: {error: true, message: 'El paciente no existe'} if @patient.nil?
+    unless @patient.nil?
+      @obj = get_all_controls(@patient.id)
+      render status: 200, json: {controls: @obj}
+    end
+  end
+
   private
 
   def patient_params
@@ -79,5 +88,18 @@ class PatientsController < ApiController
     obj.merge!(patient.person.attributes.except('id'))
     obj.merge!(patient.attributes.except('person_id'))
     obj
+  end
+
+  def get_all_controls(id)
+    all_a = Appointment.with_deleted.where(patient_id: id)
+    filtered = []
+
+    all_a.each do |a|
+      mc = MedicalConsultation.find_by_appointment_id(a.id)
+      control = nil
+      control = PatientControl.find_by_id(mc.patient_control_id) unless mc.nil?
+      filtered.push(control.get_all_attrs) unless control.nil?
+    end
+    return filtered
   end
 end

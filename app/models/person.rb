@@ -8,7 +8,7 @@ class Person < ApplicationRecord
   validates :last_name, presence: true
   validates :genre, inclusion: {in: %w[Masculino Femenino]}
   validates :birthday, presence: true
-  validates :email, uniqueness: {case_sensitive: false}, format: {with: VALID_EMAIL_REGEX}
+  validates :email, uniqueness: {case_sensitive: false}, format: {with: VALID_EMAIL_REGEX}, if: :email_not_blank?
   # Falta el inclusion (verificar que manda React)
   validates :civil_status, presence: true
 
@@ -17,6 +17,10 @@ class Person < ApplicationRecord
 
   def display_name
     identification + ' - ' + name + ' ' + last_name
+  end
+
+  def email_not_blank?
+    !email.blank?
   end
 
   def get_all_attrs

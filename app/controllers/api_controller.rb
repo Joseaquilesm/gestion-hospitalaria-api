@@ -83,8 +83,8 @@ class ApiController < ActionController::API
   end
 
   def verify_users_consultations
-    unless @current_user.doctor?
-      return render status: 200, json: {error: true, message: 'Debes ser doctor para realizar esta función', isTokenValid: is_token_valid?}
+    unless @current_user.doctor? || @current_user.admin?
+      return render status: 200, json: {error: true, message: 'Debes ser administrador o doctor para realizar esta función', isTokenValid: is_token_valid?}
     end
   end
 

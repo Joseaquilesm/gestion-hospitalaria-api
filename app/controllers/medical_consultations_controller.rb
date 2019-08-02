@@ -10,6 +10,8 @@ class MedicalConsultationsController < ApiController
   end
 
   def create
+    @specialty = Specialty.find_by_name(params[:specialty])
+    @appointment = Appointment.find_by_id(params[:appointment_id])
     @analytic = Analytic.new(analytic_params)
     @patient_control = PatientControl.new(patient_control_params)
     @medical_consultation = MedicalConsultation.new(medical_consultation_params)
@@ -19,6 +21,8 @@ class MedicalConsultationsController < ApiController
         @analytic.save!
         @patient_control.save!
         @consultation_bill.save!
+        @medical_consultation.specialty = @specialty
+        @medical_consultation.appointment = @appointment
         @medical_consultation.analytic = @analytic
         @medical_consultation.patient_control = @patient_control
         @medical_consultation.save!
@@ -30,6 +34,7 @@ class MedicalConsultationsController < ApiController
     rescue StandardError
       @obj = {}
       fill_errors(@analytic.errors, @obj)
+      fill_errors(@patient_control.errors, @obj)
       fill_errors(@medical_consultation.errors, @obj)
       fill_errors(@consultation_bill.errors, @obj)
       render status: 200, json: {error: true, messages: @obj}
@@ -68,7 +73,7 @@ class MedicalConsultationsController < ApiController
   private
 
   def medical_consultation_params
-    params.permit(:appointment_id, :medical_order_id, :patient_control_id, :specialty_id, :consultation_motive, :current_disease_history,
+    params.permit(:appointment_id, :consultation_motive, :current_disease_history,
                   :psi_background, :childhood_background, :teen_background, :adult_background, :medicines_background, :allergies_background,
                   :traumatic_background, :surgical_background, :psychosexual_sphere, :hospitalizations, :toxic_habits, :mother_background,
                   :father_background, :siblings_background, :spouse_background, :others_background, :premorbid_personality, :family_constellation,

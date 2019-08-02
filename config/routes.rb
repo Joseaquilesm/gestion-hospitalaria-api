@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     get 'patients/:id/medical_consultations', to: 'medical_consultations#get_by_patient'
 
     get 'today_appointments/:id', to: 'appointments#get_today_appointments'
+    get 'patient_controls/:id', to: 'patients#get_patient_controls'
   end
   root to: redirect('/admin')
 end
