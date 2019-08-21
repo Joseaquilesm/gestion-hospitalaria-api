@@ -45,12 +45,12 @@ class User < ApplicationRecord
 
   def get_all_attrs
     info = {}
-    info.merge!(id: self.id)
-    # info.merge!(self.person.get_all_attrs)
-    info.merge!(self.get_attrs)
-    info.merge!(role: self.role.name)
-    info.merge!(specialty: self.specialty.name) if self.doctor?
-    info.merge!(self.work_day.attributes) unless self.work_day.nil?
+    info.merge!(id: id)
+    info.merge!(person.get_all_attrs)
+    info.merge!(get_attrs)
+    info.merge!(role: role.name)
+    info.merge!(specialty: specialty.name) if doctor?
+    info.merge!(work_day.get_all_attrs) unless work_day.nil?
     return info
   end
 end

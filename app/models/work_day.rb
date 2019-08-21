@@ -12,4 +12,8 @@ class WorkDay < ApplicationRecord
   def display_name
     "WorkDay ##{id}"
   end
+
+  def get_all_attrs
+    attributes.except(:id.to_s)
+  end
 end
