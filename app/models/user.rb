@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def get_attrs
-    attributes.except(:person_id.to_s, :role_id.to_s, :specialty_id.to_s, :work_day_id.to_s, :password_digest.to_s)
+    attributes.except(:id.to_s, :person_id.to_s, :role_id.to_s, :specialty_id.to_s, :work_day_id.to_s, :password_digest.to_s)
   end
 
   def get_all_attrs
