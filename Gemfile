@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-git_source(:github) {|repo| "https://github.com/#{repo}.git"}
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
@@ -31,6 +31,12 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+
+  gem 'capistrano', require: false
+  gem 'capistrano-rbenv', '~> 2.1', '>= 2.1.4', require: false
+  gem 'capistrano-rails', require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano3-puma', require: false
 end
 
 group :development do

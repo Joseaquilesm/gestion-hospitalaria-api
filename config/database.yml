@@ -22,4 +22,9 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adapter: postgresql
+  enconding: unicode
+  database: gestion-hospitalaria
+  username: sistema
+  password: 12345678
+  host: localhost
