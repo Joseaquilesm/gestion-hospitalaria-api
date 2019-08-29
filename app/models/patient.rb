@@ -31,4 +31,10 @@ class Patient < ApplicationRecord
   def get_all_attrs
     person.get_all_attrs.merge(get_attrs)
   end
+
+  def delete_appointments
+    appointments.with_deleted.each do |a|
+      a.really_destroy!
+    end
+  end
 end

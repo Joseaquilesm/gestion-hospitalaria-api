@@ -55,4 +55,14 @@ class User < ApplicationRecord
     info.merge!(work_day.get_all_attrs) unless work_day.nil?
     return info
   end
+
+  def appointments
+    Appointment.with_deleted.where("doctor_id = ? OR secretary_id = ?", self.id, self.id)
+  end
+
+  def delete_appointments
+    appointments.each do |a|
+      a.really_destroy!
+    end
+  end
 end
