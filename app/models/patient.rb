@@ -16,6 +16,9 @@ class Patient < ApplicationRecord
 
   belongs_to :person, dependent: :destroy
   has_one :clinic_history, dependent: :destroy
+  has_many :appointments
+
+  before_destroy :delete_appointments
 
   def display_name
     person.identification + ' - ' + person.name + ' ' + person.last_name

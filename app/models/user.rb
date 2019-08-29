@@ -17,6 +17,8 @@ class User < ApplicationRecord
   # has_and_belongs_to_many :medic_license
   # has_and_belongs_to_many :permission
 
+  before_destroy :delete_appointments
+
   validates :password, length: {minimum: 6}, if: -> { new_record? || !password.nil? }
 
   def admin?
